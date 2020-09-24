@@ -9,7 +9,7 @@ export default {
       type: Object,
       required: false,
       default: null,
-    }
-  }
-}
+    },
+  },
+};
 </script>

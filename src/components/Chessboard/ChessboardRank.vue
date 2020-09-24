@@ -12,8 +12,6 @@
 </template>
 
 <script>
-const CHESSBOARD_SIZE = 8;
-
 export default {
   props: {
     position: {
@@ -22,20 +20,23 @@ export default {
       default: 'left',
       validate: (val) => ['left', 'right'].includes(val),
     },
+    numberOfRows: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     const ranks = [];
     const firstRankCharCode = 'A'.charCodeAt(0);
     for (
       let charCode = firstRankCharCode;
-      charCode < firstRankCharCode + CHESSBOARD_SIZE;
+      charCode < firstRankCharCode + this.numberOfRows;
       charCode += 1
     ) {
       ranks.push(String.fromCharCode(charCode));
     }
     return {
       ranks,
-      chessboardSize: CHESSBOARD_SIZE,
     };
   },
 };

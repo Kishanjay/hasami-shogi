@@ -2,7 +2,7 @@
   <div class="flex">
     <div class="w-8" />
     <div
-      v-for="file of chessboardSize"
+      v-for="file of numberOfColumns"
       :key="file"
       class="w-16 h-8 flex justify-center"
       :class="[position === 'top' ? 'items-start' : 'items-end']"
@@ -12,8 +12,6 @@
   </div>
 </template>
 <script>
-const CHESSBOARD_SIZE = 8;
-
 export default {
   props: {
     position: {
@@ -22,11 +20,10 @@ export default {
       default: 'top',
       validate: (val) => ['top', 'bottom'].includes(val),
     },
-  },
-  data() {
-    return {
-      chessboardSize: CHESSBOARD_SIZE,
-    };
+    numberOfColumns: {
+      type: Number,
+      required: true,
+    },
   },
 };
 </script>

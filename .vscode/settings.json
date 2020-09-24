@@ -1,0 +1,15 @@
+{
+    "eslint.alwaysShowStatus": true,
+    "eslint.codeAction.showDocumentation": {
+
+        "enable": true
+    },
+    "eslint.format.enable": true,
+    "eslint.packageManager": "yarn",
+    "eslint.validate": [
+     "vue", "javascript", "typescript"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
+}

@@ -8,17 +8,14 @@ module.exports = {
     'airbnb-base',
     'prettier',
     'prettier/vue',
+    'plugin:prettier/recommended',
     'plugin:gridsome/recommended',
-    'plugin:vue/recommended',
   ],
   parserOptions: {
     ecmaVersion: 2019,
     sourceType: 'module',
   },
-  plugins: [
-    'gridsome',
-    'vue',
-  ],
+  plugins: ['gridsome', 'vue', 'prettier'],
   settings: {
     'import/resolver': {
       alias: {
@@ -30,4 +27,4 @@ module.exports = {
       },
     },
   },
-};
+}

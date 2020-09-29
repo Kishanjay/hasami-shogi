@@ -1,31 +1,37 @@
 <template>
   <div class="flex justify-center items-center min-h-screen bg-gray-400">
-    <Chessboard :board-state="boardState" />
+    <Shogiboard :board-state="boardState" @move:piece="movePiece" />
   </div>
 </template>
 
 <script>
-import Chessboard from '@/components/Chessboard/Chessboard.vue';
+import Shogiboard from '@/components/Shogiboard/Shogiboard.vue';
+
+import { moveBoardPiece } from '@/components/Shogiboard/Shogiboard.helper';
 
 export default {
   components: {
-    Chessboard,
+    Shogiboard,
   },
   data() {
     return {
       boardState: [
-        [0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1],
       ],
     };
   },
   metaInfo: {
     title: 'Hello, world!',
+  },
+  methods: {
+    movePiece(origin, destination) {
+      this.boardState = moveBoardPiece(this.boardState, origin, destination);
+    },
   },
 };
 </script>

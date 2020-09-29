@@ -1,5 +1,7 @@
 <template>
-  <div />
+  <div class="flex justify-center items-center">
+    <slot />
+  </div>
 </template>
 
 <script>
@@ -13,3 +15,5 @@ export default {
   },
 };
 </script>
+
+<style scoped></style>

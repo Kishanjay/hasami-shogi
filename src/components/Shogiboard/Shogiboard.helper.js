@@ -14,6 +14,10 @@ export function getCell(board, [rowIndex, columnIndex]) {
   return board[rowIndex][columnIndex];
 }
 
+export function equalIndex(board, index1, index2) {
+  return index1[0] === index2[0] && index1[1] === index2[1];
+}
+
 /**
  * Can make a deep copy of the shogiBoard(state)
  *
@@ -105,3 +109,5 @@ export function canMoveTo(board, origin, destination) {
 
   return false;
 }
+
+export function cpuMovePiece(board, origin, destination) {}

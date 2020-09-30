@@ -35,7 +35,7 @@ import ShogiboardCell from './ShogiboardCell.vue';
 
 import ShogiboardPiece from './ShogiboardPiece.vue';
 
-import { getCell, canMoveTo, copyBoard } from './Shogiboard.helper';
+import { getCell, canMoveTo, copyBoard, equalIndex } from './Shogiboard.helper';
 
 export default {
   components: {
@@ -47,6 +47,11 @@ export default {
   props: {
     boardState: {
       type: Array,
+      required: true,
+    },
+    // Which team can make a move
+    turnTeamId: {
+      type: Number,
       required: true,
     },
   },
@@ -69,14 +74,29 @@ export default {
   },
   methods: {
     cellClickHandler(index) {
+      // Logic related to moving a piece
       if (this.selectedPiece) {
+        // Put down the picked up piece
+        if (equalIndex(this.boardState, this.selectedPiece, index)) {
+          this.updateSelectedPiece(null);
+          return;
+        }
+        // Valid move
         if (getCell(this.selectedPieceMoveOptions, index)) {
           this.moveSelectedPiece(index);
           this.updateSelectedPiece(null);
           return;
         }
+        // Invalid move
+        this.updateSelectedPiece(null);
+        return;
       }
-      this.updateSelectedPiece(index);
+
+      // Logic related to selecting a piece
+      const cellValue = getCell(this.boardState, index);
+      if (cellValue === this.turnTeamId) {
+        this.updateSelectedPiece(index);
+      }
     },
     moveSelectedPiece(index) {
       this.$emit('move:piece', this.selectedPiece, index);

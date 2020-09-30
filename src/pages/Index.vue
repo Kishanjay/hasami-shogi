@@ -1,6 +1,10 @@
 <template>
   <div class="flex justify-center items-center min-h-screen bg-gray-400">
-    <Shogiboard :board-state="boardState" @move:piece="movePiece" />
+    <Shogiboard
+      :board-state="boardState"
+      :turn-team-id="turnTeamId"
+      @move:piece="movePiece"
+    />
   </div>
 </template>
 
@@ -23,6 +27,7 @@ export default {
         [0, 0, 0, 0, 0],
         [2, 2, 2, 2, 2],
       ],
+      turnTeamId: 2,
     };
   },
   metaInfo: {

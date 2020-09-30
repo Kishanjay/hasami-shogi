@@ -51,8 +51,9 @@ function setCell(board, index, value) {
 
 export function moveBoardPiece(board, origin, destination) {
   let result = copyBoard(board);
+  const cellValue = getCell(board, origin);
   result = setCell(result, origin, 0);
-  result = setCell(result, destination, 1);
+  result = setCell(result, destination, cellValue);
 
   return result;
 }

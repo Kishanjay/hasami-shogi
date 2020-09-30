@@ -18,7 +18,7 @@
             }"
             @click.native="cellClickHandler([rowNumber, columnNumber])"
           >
-            <ShogiboardPiece v-if="cellValue" />
+            <ShogiboardPiece v-if="cellValue" :team-id="cellValue" />
           </ShogiboardCell>
         </div>
       </div>

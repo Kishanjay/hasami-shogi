@@ -21,12 +21,12 @@ export default {
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0],
-        [1, 1, 1, 1, 1],
+        [2, 2, 2, 2, 2],
       ],
     };
   },
   metaInfo: {
-    title: 'Hello, world!',
+    title: 'Lets play some Shogi!',
   },
   methods: {
     movePiece(origin, destination) {

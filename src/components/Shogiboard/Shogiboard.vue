@@ -78,7 +78,7 @@ export default {
       // Logic related to moving a piece
       if (this.selectedPiece) {
         // Put down the picked up piece
-        if (equalIndex(this.boardState, this.selectedPiece, index)) {
+        if (equalIndex(this.selectedPiece, index)) {
           this.updateSelectedPiece(null);
           return;
         }

@@ -29,7 +29,7 @@ export function getHeight(board) {
  * @param {Array} index1 Tupple of the [row, column]
  * @param {Array} index2 Tupple of the [row, column]
  */
-export function equalIndex(board, index1, index2) {
+export function equalIndex(index1, index2) {
   return index1[0] === index2[0] && index1[1] === index2[1];
 }
 

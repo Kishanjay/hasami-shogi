@@ -1,36 +1,44 @@
 // eslint-disable-next-line import/no-unresolved
-import { ShogiBoard } from 'hasami-shogi-engine';
+// import { ShogiBoard } from 'hasami-shogi-engine';
+
 // eslint-disable-next-line import/named
-import { memory } from 'hasami-shogi-engine/hasami_shogi_engine_bg.wasm';
+// import { memory } from 'hasami-shogi-engine/hasami_shogi_engine_bg.wasm';
 
-import { getHeight, getWidth } from '@/components/Shogiboard/Shogiboard.helper';
+import { memory } from '../wasm/hasami-shogi-engine/pkg/hasami_shogi_engine_bg.wasm';
+import { ShogiGame } from '../wasm/hasami-shogi-engine/pkg/hasami_shogi_engine';
 
-function rustSerializeBoardState(boardState) {
-  return boardState.reduce((prev, cur) => prev.concat(cur), []);
+/**
+ * Returns an array with arrays of the given size.
+ *
+ * @param myArray {Array} array to split
+ * @param chunk_size {Integer} Size of every group
+ */
+function chunkArray(arr, chunkSize) {
+  const result = [];
+
+  for (let index = 0; index < arr.length; index += chunkSize) {
+    const curChunk = Array.from(arr.slice(index, index + chunkSize));
+    result.push(curChunk);
+  }
+
+  return result;
 }
 
-function newGame(boardState) {
-  const width = getWidth(boardState);
-  const height = getHeight(boardState);
+export function newGame(width, height) {
+  const shogiGame = ShogiGame.new(width, height);
+  return shogiGame;
+}
 
-  const rustBoardState = rustSerializeBoardState(boardState);
-  const shogiBoard = ShogiBoard.new(width, height, rustBoardState);
+export function getBoardState(shogiBoard) {
+  const width = shogiBoard.width();
+  const height = shogiBoard.height();
+
   const cellsPtr = shogiBoard.cells();
   const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
-
-  console.log({ cells });
-  return shogiBoard;
+  const result = chunkArray(cells, width);
+  return result;
 }
 
-export function getComputerMove(boardState) {
-  const shogiBoard = newGame(boardState);
+export function computerMove(shogiBoard) {
   shogiBoard.computer_move();
-  return [
-    [0, 1],
-    [2, 2],
-  ];
-}
-
-export function getGameBoard(boardState) {
-  return boardState;
 }

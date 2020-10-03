@@ -52,7 +52,8 @@ export default {
     // Which team can make a move
     movingPlayerId: {
       type: Number,
-      required: true,
+      required: false,
+      default: 1,
     },
   },
   data() {

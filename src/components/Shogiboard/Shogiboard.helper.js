@@ -68,6 +68,13 @@ function setCell(board, index, value) {
   return boardCopy;
 }
 
+/**
+ * @deprecated The board state will be kept fully in the wasm memory
+ *
+ * @param {Array} board The shogiboard state
+ * @param {Array} origin Index of the board
+ * @param {Array} destination Index of the board
+ */
 export function moveBoardPiece(board, origin, destination) {
   let result = copyBoard(board);
   const cellValue = getCell(board, origin);

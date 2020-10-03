@@ -6,11 +6,18 @@
     "develop": "gridsome develop",
     "explore": "gridsome explore"
   },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
   "dependencies": {
     "gridsome": "^0.7.0",
     "vue": "^2.6.12"
   },
   "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.11.0",
@@ -21,6 +28,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "gridsome-plugin-tailwindcss": "^3.0.1",
     "gridsome-plugin-typescript": "^0.4.0",
+    "husky": "^4.3.0",
     "prettier": "^2.1.2",
     "tailwindcss-plugin-fancy": "^2.4.4"
   }

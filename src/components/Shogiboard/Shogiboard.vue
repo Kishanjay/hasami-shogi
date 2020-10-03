@@ -50,7 +50,7 @@ export default {
       required: true,
     },
     // Which team can make a move
-    turnTeamId: {
+    movingPlayerId: {
       type: Number,
       required: true,
     },
@@ -94,7 +94,7 @@ export default {
 
       // Logic related to selecting a piece
       const cellValue = getCell(this.boardState, index);
-      if (cellValue === this.turnTeamId) {
+      if (cellValue === this.movingPlayerId) {
         this.updateSelectedPiece(index);
       }
     },

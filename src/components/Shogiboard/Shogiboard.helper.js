@@ -14,6 +14,21 @@ export function getCell(board, [rowIndex, columnIndex]) {
   return board[rowIndex][columnIndex];
 }
 
+export function getWidth(board) {
+  return board[0].length;
+}
+
+export function getHeight(board) {
+  return board.length;
+}
+
+/**
+ * Helper function that compares 2 board indexes with eachother
+ *
+ * @param {Array} board The shogiBoard(state)
+ * @param {Array} index1 Tupple of the [row, column]
+ * @param {Array} index2 Tupple of the [row, column]
+ */
 export function equalIndex(board, index1, index2) {
   return index1[0] === index2[0] && index1[1] === index2[1];
 }
@@ -109,5 +124,3 @@ export function canMoveTo(board, origin, destination) {
 
   return false;
 }
-
-export function cpuMovePiece(board, origin, destination) {}

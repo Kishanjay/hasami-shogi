@@ -25,8 +25,15 @@ function chunkArray(arr, chunkSize) {
 }
 
 export function newGame(width, height) {
-  const shogiGame = ShogiGame.new(width, height);
-  return shogiGame;
+  return ShogiGame.new(width, height);
+}
+
+export function importGame(width, height, boardState) {
+  const flatBoardState = boardState.reduce(
+    (prev, cur) => [...prev, ...cur],
+    []
+  );
+  return ShogiGame.import(width, height, flatBoardState);
 }
 
 export function getBoardState(shogiBoard) {

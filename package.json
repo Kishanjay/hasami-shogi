@@ -4,7 +4,8 @@
   "scripts": {
     "build": "gridsome build",
     "develop": "gridsome develop",
-    "explore": "gridsome explore"
+    "explore": "gridsome explore",
+    "build-cpu": "cd src/wasm/hasami-shogi-engine && wasm-pack build"
   },
   "husky": {
     "hooks": {
@@ -13,6 +14,7 @@
   },
   "dependencies": {
     "gridsome": "^0.7.0",
+    "hasami-shogi-engine": "file:src/wasm/hasami-shogi-engine/pkg",
     "vue": "^2.6.12"
   },
   "devDependencies": {

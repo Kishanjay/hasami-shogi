@@ -22,6 +22,24 @@ export function getHeight(board) {
   return board.length;
 }
 
+export function getRank(rowIndex) {
+  const firstRankCharCode = 'A'.charCodeAt(0);
+  const charCode = firstRankCharCode + rowIndex;
+  return String.fromCharCode(charCode);
+}
+
+export function getRanks(numberOfRanks) {
+  const ranks = [];
+  for (let i = 0; i < numberOfRanks; i += 1) {
+    ranks.push(getRank(i));
+  }
+  return ranks;
+}
+
+export function indexToRankFile([rowIndex, columnIndex]) {
+  return getRank(rowIndex) + (columnIndex + 1);
+}
+
 /**
  * Helper function that compares 2 board indexes with eachother
  *
@@ -130,4 +148,36 @@ export function canMoveTo(board, origin, destination) {
   }
 
   return false;
+}
+
+/**
+ * Extract which piece has moved based on 2 boardStates (right after eachother)
+ *
+ * @param {*} previousBoardState
+ * @param {*} currentBoardState
+ */
+export function getMovedPiece(previousBoardState, currentBoardState) {
+  const width = getWidth(previousBoardState);
+  const height = getHeight(previousBoardState);
+  let destination;
+  let origin;
+
+  for (let row = 0; row < height; row += 1) {
+    for (let column = 0; column < width; column += 1) {
+      const index = [row, column];
+      if (
+        getCell(previousBoardState, index) !== 0 &&
+        getCell(currentBoardState, index) === 0
+      ) {
+        origin = [row, column];
+      } else if (
+        getCell(previousBoardState, index) === 0 &&
+        getCell(currentBoardState, index) !== 0
+      ) {
+        destination = index;
+      }
+    }
+  }
+
+  return [[origin, destination], getCell(currentBoardState, destination)];
 }

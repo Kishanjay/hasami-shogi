@@ -1,7 +1,7 @@
 <template>
   <div class="w-8">
     <div
-      v-for="rank of ranks.slice().reverse()"
+      v-for="rank of ranks.slice()"
       :key="rank"
       class="h-16 flex items-center"
       :class="[position === 'left' ? 'justify-start' : 'justify-end']"
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { getRanks } from '@/components/Shogiboard/Shogiboard.helper';
+
 export default {
   props: {
     position: {
@@ -26,15 +28,7 @@ export default {
     },
   },
   data() {
-    const ranks = [];
-    const firstRankCharCode = 'A'.charCodeAt(0);
-    for (
-      let charCode = firstRankCharCode;
-      charCode < firstRankCharCode + this.numberOfRows;
-      charCode += 1
-    ) {
-      ranks.push(String.fromCharCode(charCode));
-    }
+    const ranks = getRanks(this.numberOfRows);
     return {
       ranks,
     };

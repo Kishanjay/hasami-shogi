@@ -1,18 +1,46 @@
 <template>
-  <div class="layout">
-    <header class="header">
-      <strong>
+  <div class="layout flex min-h-screen">
+    <header class="header px-4 py-6 flex-initial flex flex-col">
+      <strong class="mb-4">
         <g-link to="/">{{ $static.metadata.siteName }}</g-link>
       </strong>
-      <nav class="nav">
-        <g-link class="nav__link" to="/">Home</g-link>
-        <g-link class="nav__link" to="/index2">Home2</g-link>
-        <g-link class="nav__link" to="/about/">About</g-link>
+
+      <nav class="nav flex flex-col">
+        <g-link
+          class="p-2 rounded my-1 flex items-center"
+          to="/"
+          exact-active-class="bg-gray-200"
+        >
+          <PlayIcon class="w-4 h-4" />
+          <span class="ml-2">Play</span>
+        </g-link>
+        <g-link
+          class="p-2 rounded my-1 flex items-center"
+          to="/about"
+          exact-active-class="bg-gray-200"
+        >
+          <InfoIcon class="w-4 h-4" />
+          <span class="ml-2">About</span>
+        </g-link>
       </nav>
     </header>
-    <slot/>
+    <main class="p-10 bg-gray-400 flex-auto">
+      <slot />
+    </main>
   </div>
 </template>
+
+<script>
+import PlayIcon from '@/components/Icons/PlayIcon.vue';
+import InfoIcon from '@/components/Icons/InfoIcon.vue';
+
+export default {
+  components: {
+    PlayIcon,
+    InfoIcon,
+  },
+};
+</script>
 
 <static-query>
 query {
@@ -22,30 +50,8 @@ query {
 }
 </static-query>
 
-<style>
-body {
-  font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  margin:0;
-  padding:0;
-  line-height: 1.5;
-}
-
-.layout {
-  max-width: 760px;
-  margin: 0 auto;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  height: 80px;
-}
-
-.nav__link {
-  margin-left: 20px;
+<style lang="css" scoped>
+nav {
+  min-width: 200px;
 }
 </style>

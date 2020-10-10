@@ -3,16 +3,10 @@ module.exports = {
     // removeDeprecatedGapUtilities: true,
     // purgeLayersByDefault: true,
   },
-  purge: [
-    './src/**/*.html',
-    './src/**/*.vue',
-    './src/**/*.jsx',
-  ],
+  purge: ['./src/**/*.html', './src/**/*.vue', './src/**/*.jsx'],
   theme: {
     extend: {},
   },
   variants: {},
-  plugins: [
-    require('tailwindcss-plugin-fancy')
-  ],
-}
+  plugins: [],
+};

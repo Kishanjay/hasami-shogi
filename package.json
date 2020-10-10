@@ -31,7 +31,6 @@
     "gridsome-plugin-tailwindcss": "^3.0.1",
     "gridsome-plugin-typescript": "^0.4.0",
     "husky": "^4.3.0",
-    "prettier": "^2.1.2",
-    "tailwindcss-plugin-fancy": "^2.4.4"
+    "prettier": "^2.1.2"
   }
 }

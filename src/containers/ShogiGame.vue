@@ -59,10 +59,10 @@ export default {
 
       this.cpuThinkingTimer = setTimeout(() => {
         this.computerMovePiece();
-      }, 500);
+      }, 1);
     },
     computerMovePiece() {
-      this.shogiGame.computer_move();
+      this.shogiGame.computer_move(3);
       this.update_board_state();
       this.movingPlayerId = 1;
     },

@@ -101,9 +101,7 @@ impl ShogiGame {
   }
 
   pub fn computer_move(&mut self, think_depth: u32) {
-    // println!("Asking CPU to make a move");
-    let game_move = self.calculate_best_move(true, think_depth, true);
-    // println!("CPU: {:?}", game_move);
+    let game_move = self.get_best_move(Cell::Player2, think_depth, true);
     self.move_piece(game_move.origin_idx, game_move.destination_idx);
   }
 
@@ -137,7 +135,7 @@ impl ShogiGame {
         Cell::Player2 => chunk.push('2'),
         Cell::Empty => chunk.push('0'),
       }
-      if i != 0 && i % 8 == 0 {
+      if i != 0 && i+1 % 8 == 0 {
         result.push_str(&chunk);
         result.push('\n');
         chunk = String::from("");
@@ -162,25 +160,48 @@ impl ShogiGame {
     (idx - column_idx) / self.height
   }
 
-  pub fn calculate_best_move(&mut self, maximizing_player: bool, think_depth: u32, randomize: bool) -> GameMove {
-    let alpha = if maximizing_player { i32::MIN } else { i32::MAX };
-    let beta = if maximizing_player { i32::MAX } else { i32::MIN };
-    let move_heuristic = mini_maxi(self, maximizing_player, think_depth, alpha, beta, true);
-    let best_moves = move_heuristic.1;
+  // Will calculate the best move for a player given the current board position
+  // <think_depth>: indicates how many moves the cpu player should think ahead
+  // <randomize>: randomly pick among identically evaluated moves
+  pub fn get_best_move(&mut self, player: Cell, think_depth: u32, randomize: bool) -> GameMove {
+    let maximizing_player = player == Cell::Player2;
+
+    let mut best_move_heuristic = if maximizing_player { i32::MIN } else { i32::MAX };
+    let mut best_move_options = vec![];
+    let move_options: Vec<GameMove> = self.move_options(player);
+
+    // pick any move at random
+    if think_depth == 0 {
+      best_move_options = move_options;
+    }
+    // compute the best move
+    else {
+      let alpha = if maximizing_player { i32::MIN } else { i32::MAX };
+      let beta = if maximizing_player { i32::MAX } else { i32::MIN };
+      // for each move get its evaluation using minimax
+      for move_option in move_options.iter() {
+        let mut temp_board = self.clone();
+        temp_board.move_piece(move_option.origin_idx, move_option.destination_idx);
+        let move_heuristic = mini_maxi(&mut temp_board, !maximizing_player, think_depth-1, alpha, beta);
+
+        // keep the best evaluations
+        if maximizing_player && move_heuristic > best_move_heuristic ||
+        !maximizing_player && move_heuristic < best_move_heuristic {
+          best_move_heuristic = move_heuristic;
+          best_move_options = vec![*move_option];
+        } else if move_heuristic == best_move_heuristic {
+          best_move_options.push(*move_option);
+        }
+      }
+    }
 
     let mut idx = 0;
-    if randomize && best_moves.len() > 1 {
-      idx = get_random_idx(best_moves.len() - 1);
+    // pick among any of the 'best moves'
+    if randomize && best_move_options.len() > 1 {
+      idx = get_random_idx(best_move_options.len() - 1);
     }
 
-    // log!("Picking the best move GOT: {:?}", best_moves.len());
-    for m in best_moves.iter() {
-      // log!("{:?}", m);
-    }
-
-    // log!("Best move got: {:?}", move_heuristic.0);
-
-    best_moves[idx]
+    best_move_options[idx]
   }
 
   // moves a piece on the given board from origin_idx to destination_idx. this func
@@ -210,13 +231,6 @@ impl ShogiGame {
     captures
   }
 
-  // // returns a value indicating how good the passed move option is
-  // fn evaluate_move_option(&self, move_option: &GameMove) -> HeuristicValue {
-  //   let mut shogi_game = self.clone();
-  //   shogi_game.move_piece(move_option.origin_idx, move_option.destination_idx);
-  //   shogi_game.heuristic_value()
-  // }
-
   // returns a value indicating how many pieces the cpu has over the player
   fn heuristic_value(&self) -> HeuristicValue {
     let mut total = 0;
@@ -229,42 +243,6 @@ impl ShogiGame {
     }
     total
   }
-
-  // // returns the move with the highest heuristic value given a set of moves
-  // // if there are multiple moves with the same heuristic value, one will be
-  // // chosen at random.
-  // //
-  // // <maximize_heuristic>: a boolean indicating whether it should maximize the
-  // // heuristic value (will minimize otherwise).
-  // fn best_move_option(&self, move_options: &Vec<GameMove>, maximize_heuristic: bool) -> MoveHeuristic {
-  //   let mut best_heuristic = if maximize_heuristic { i32::MIN } else { i32::MAX };
-  //   let mut best_move: &GameMove = &move_options[0];
-  //   let mut best_moves: Vec<&GameMove> = vec![&best_move];
-  //   let board_heuristic = self.heuristic_value();
-
-  //   for move_option in move_options.iter() {
-  //     let current_heuristic_value = self.evaluate_move_option(move_option);
-
-  //     if (maximize_heuristic && current_heuristic_value > best_heuristic) ||
-  //       (!maximize_heuristic && current_heuristic_value < best_heuristic) {
-  //       best_heuristic = current_heuristic_value;
-  //       best_move = &move_option;
-  //       best_moves = vec![best_move];
-  //     } else if current_heuristic_value == best_heuristic {
-  //       best_moves.push(&move_option);
-  //     }
-  //   }
-
-  //   if best_moves.len() > 1 {
-  //     let random_idx = (js_sys::Math::random() * best_moves.len() as f64).floor() as usize;
-  //     best_move = best_moves[random_idx];
-  //   }
-
-  //   MoveHeuristic {
-  //     game_move: best_move.clone(),
-  //     value: best_heuristic,
-  //   }
-  // }
 
   // get all move options of the player given the board
   fn move_options(&self, current_player: Cell) -> Vec<GameMove> {
@@ -421,50 +399,39 @@ impl ShogiGame {
 // function is responsible for calculating the best move for the a player by
 // computing the counter-moves (and its counter-moves) until it finds a
 // guaranteed best move to play
-fn mini_maxi(board: &mut ShogiGame, maxi: bool, depth: u32, mut alpha: HeuristicValue, mut beta: HeuristicValue, root: bool) -> (HeuristicValue, Vec<GameMove>) {
-  let current_player: Cell = if maxi { Cell::Player2 } else { Cell::Player1 };
+pub fn mini_maxi(board: &mut ShogiGame, maximizing_player: bool, depth: u32, mut alpha: HeuristicValue, mut beta: HeuristicValue) -> HeuristicValue {
+  let current_player = if maximizing_player { Cell::Player2 } else { Cell::Player1 };
   let move_options: Vec<GameMove> = board.move_options(current_player);
 
-  // early return; stop condition
+  // stop condition
   if depth == 0 || move_options.len() == 0 {
-    ( board.heuristic_value(),
-      vec![],
-    )
-  } else {
-    let mut best_heuristic_value: i32 = if maxi { i32::MIN } else { i32::MAX };
-    let mut best_moves: Vec<GameMove> = vec![];
-
+    board.heuristic_value()
+  }
+  // recursive minimax algorithm
+  else {
+    let mut best_heuristic_value: i32 = if maximizing_player { i32::MIN } else { i32::MAX };
     for move_option in move_options.iter() {
       let mut temp_board = board.clone();
       temp_board.move_piece(move_option.origin_idx, move_option.destination_idx);
-      let move_heuristic = mini_maxi(&mut temp_board, !maxi, depth-1, alpha, beta, false);
-      let current_heuristic_value = move_heuristic.0;
-
-      if maxi && (alpha < current_heuristic_value) {
-        alpha = current_heuristic_value; // biggest encountered value
-      } else if !maxi && (beta > current_heuristic_value) {
-        beta = current_heuristic_value; // smallest encountered value
+      let current_heuristic_value = mini_maxi(&mut temp_board, !maximizing_player, depth-1, alpha, beta);
+      if maximizing_player && (alpha < current_heuristic_value) {
+        alpha = current_heuristic_value;
+      } else if !maximizing_player && (beta > current_heuristic_value) {
+        beta = current_heuristic_value;
       }
 
-      if maxi && (current_heuristic_value > best_heuristic_value)
-        || !maxi && (current_heuristic_value < best_heuristic_value) {
+      // keep the target heuristic value
+      if maximizing_player && (current_heuristic_value > best_heuristic_value)
+        || !maximizing_player && (current_heuristic_value < best_heuristic_value) {
         best_heuristic_value = current_heuristic_value;
-        if root {
-          best_moves = vec![*move_option];
-        }
-      } else if root && (current_heuristic_value == best_heuristic_value) {
-        best_moves.push(*move_option);
       }
 
-      if beta < alpha {
-        best_heuristic_value = if maxi { i32::MAX } else { i32::MIN };
-        break;
-      } else if beta == alpha {
+      if beta <= alpha {
         break;
       }
     }
 
-    (best_heuristic_value, best_moves)
+    best_heuristic_value
   }
 }
 

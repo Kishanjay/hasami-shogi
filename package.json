@@ -5,7 +5,8 @@
     "build": "gridsome build",
     "develop": "gridsome develop",
     "explore": "gridsome explore",
-    "build-cpu": "cd src/wasm/hasami-shogi-engine && wasm-pack build"
+    "build-cpu": "cd src/wasm/hasami-shogi-engine && wasm-pack build",
+    "test-cpu": "cd src/wasm/hasami-shogi-engine && cargo test"
   },
   "husky": {
     "hooks": {

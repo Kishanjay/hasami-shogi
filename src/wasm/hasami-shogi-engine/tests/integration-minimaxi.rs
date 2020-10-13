@@ -60,30 +60,30 @@ fn it_correctly_thinks_3_moves_ahead() {
   // 0 0 0 0 0
   // 0 0 0 0 0
   // 2 2 2 2 2
-  let board_state = vec![0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2];
-  let mut sg = ShogiGame::import(5,5, board_state);
-  let game_move = sg.calculate_best_move(true, 3, false);
+  // let board_state = vec![0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2];
+  // let mut sg = ShogiGame::import(5,5, board_state);
+  // let game_move = sg.calculate_best_move(true, 3, false);
 
-  assert_eq!(22, game_move.origin_idx);
-  assert_eq!(7, game_move.destination_idx);
+  // assert_eq!(22, game_move.origin_idx);
+  // assert_eq!(7, game_move.destination_idx);
 
-  let mut sg = ShogiGame::new(8,8);
-  sg.move_piece(58, 42);
-  sg.move_piece(0, 8);
-  sg.move_piece(60, 44);
-  let game_move = sg.calculate_best_move(true, 3, false);
+  // let mut sg = ShogiGame::new(8,8);
+  // sg.move_piece(58, 42);
+  // sg.move_piece(0, 8);
+  // sg.move_piece(60, 44);
+  // let game_move = sg.calculate_best_move(true, 3, false);
 
-  assert_eq!(3, game_move.origin_idx);
-  assert_eq!(43, game_move.destination_idx);
+  // assert_eq!(3, game_move.origin_idx);
+  // assert_eq!(43, game_move.destination_idx);
 
-  let mut sg = ShogiGame::new(8,8);
-  sg.move_piece(58, 42);
-  sg.move_piece(6, 54);
-  sg.move_piece(60, 44);
-  let game_move = sg.calculate_best_move(true, 3, false);
+  // let mut sg = ShogiGame::new(8,8);
+  // sg.move_piece(58, 42);
+  // sg.move_piece(6, 54);
+  // sg.move_piece(60, 44);
+  // let game_move = sg.calculate_best_move(true, 3, false);
 
-  assert_eq!(3, game_move.origin_idx);
-  assert_eq!(43, game_move.destination_idx);
+  // assert_eq!(3, game_move.origin_idx);
+  // assert_eq!(43, game_move.destination_idx);
 
   let mut sg = ShogiGame::new(8,8);
   sg.move_piece(58, 42);
@@ -92,4 +92,7 @@ fn it_correctly_thinks_3_moves_ahead() {
   sg.computer_move(3);
 
   assert_eq!(sg.cell(43), Cell::Player2);
+
+
+  assert_eq!(true, false);
 }

@@ -42,8 +42,7 @@ export function getBoardState(shogiBoard) {
 
   const cellsPtr = shogiBoard.cells();
   const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
-  const result = chunkArray(cells, width);
-  return result;
+  return chunkArray(cells, width);
 }
 
 export function computerMove(shogiBoard) {

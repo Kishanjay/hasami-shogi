@@ -1,10 +1,9 @@
 <template>
-  <div class="w-8">
+  <div class="w-4">
     <div
       v-for="rank of ranks.slice()"
       :key="rank"
-      class="h-16 flex items-center"
-      :class="[position === 'left' ? 'justify-start' : 'justify-end']"
+      class="h-16 flex items-center justify-center text-xs"
     >
       {{ rank }}
     </div>

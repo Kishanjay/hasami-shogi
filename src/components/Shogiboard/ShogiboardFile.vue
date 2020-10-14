@@ -1,10 +1,12 @@
 <template>
   <div class="flex">
-    <div class="w-8" />
+    <!-- rank offset -->
+    <div class="w-4" />
+
     <div
       v-for="file of numberOfColumns"
       :key="file"
-      class="w-16 h-8 flex justify-center"
+      class="w-16 h-5 flex justify-center items-center text-xs"
       :class="[position === 'top' ? 'items-start' : 'items-end']"
     >
       {{ file }}

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded p-10 flex flex-col">
+  <section class="bg-white rounded p-10 flex flex-col">
     <ShogiboardFile position="top" :number-of-columns="numberOfColumns" />
     <div class="flex">
       <ShogiboardRank position="left" :number-of-rows="numberOfRows" />
@@ -15,6 +15,7 @@
             class="relative w-16 h-16 border cursor-pointer"
             :class="{
               moveOption: selectedPieceMoveOptions[rowNumber][columnNumber],
+              highlighted: highlightedFields[rowNumber][columnNumber],
             }"
             @click.native="cellClickHandler([rowNumber, columnNumber])"
           >
@@ -25,7 +26,7 @@
       <ShogiboardRank position="right" :number-of-rows="numberOfRows" />
     </div>
     <ShogiboardFile position="bottom" :number-of-columns="numberOfColumns" />
-  </div>
+  </section>
 </template>
 
 <script>
@@ -44,16 +45,21 @@ export default {
     ShogiboardRank,
     ShogiboardPiece,
   },
+  inject: ['eventBus'],
   props: {
     boardState: {
       type: Array,
       required: true,
     },
-    // Which team can make a move
     movingPlayerId: {
       type: Number,
       required: false,
       default: 1,
+    },
+    highlightedFields: {
+      type: Array,
+      required: false,
+      default: () => [],
     },
   },
   data() {
@@ -72,6 +78,8 @@ export default {
   },
   created() {
     this.calculateSelectedPieceMoveOptions();
+
+    this.eventBus.$on('updateSelectedPiece', this.updateSelectedPiece);
   },
   methods: {
     cellClickHandler(index) {
@@ -137,14 +145,26 @@ export default {
 </script>
 
 <style scoped>
+.moveOption {
+  @apply bg-gray-100;
+  transition: 0.1s;
+}
 .moveOption::before {
   content: ' ';
   position: absolute;
   width: 8px;
   height: 8px;
-  @apply bg-red-500;
+  border-radius: 100%;
+  @apply bg-gray-400;
+  transition: 0.1s;
 }
 .moveOption:hover {
-  @apply bg-orange-100;
+  @apply bg-gray-300;
+}
+.moveOption:hover::before {
+  @apply bg-gray-500;
+}
+.highlighted {
+  @apply bg-green-100;
 }
 </style>

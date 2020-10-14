@@ -152,32 +152,56 @@ export function canMoveTo(board, origin, destination) {
 
 /**
  * Extract which piece has moved based on 2 boardStates (right after eachother)
+ * determines which piece was moved, from where and to where it was moved, but
+ * also extracts whether the move has made a capture
  *
  * @param {*} previousBoardState
  * @param {*} currentBoardState
+ * @returns {
+ *  position: [<origin>, <destination>],
+ *  player: integer,
+ *  capture: boolean
+ * }
  */
-export function getMovedPiece(previousBoardState, currentBoardState) {
+export function extractLastMove(previousBoardState, currentBoardState) {
   const width = getWidth(previousBoardState);
   const height = getHeight(previousBoardState);
   let destination;
   let origin;
 
+  // determine a capture has happend based on these delta's
+  let previousDelta = 0;
+  let currentDelta = 0;
+
   for (let row = 0; row < height; row += 1) {
     for (let column = 0; column < width; column += 1) {
       const index = [row, column];
-      if (
-        getCell(previousBoardState, index) !== 0 &&
-        getCell(currentBoardState, index) === 0
-      ) {
-        origin = [row, column];
-      } else if (
-        getCell(previousBoardState, index) === 0 &&
-        getCell(currentBoardState, index) !== 0
-      ) {
+
+      const previousCellValue = getCell(previousBoardState, index);
+      const currentCellValue = getCell(currentBoardState, index);
+
+      if (previousCellValue === 1) {
+        previousDelta += 1;
+      } else if (previousCellValue === 2) {
+        previousDelta -= 1;
+      }
+      if (currentCellValue === 1) {
+        currentDelta += 1;
+      } else if (currentCellValue === 2) {
+        currentDelta -= 1;
+      }
+
+      if (previousCellValue !== 0 && currentCellValue === 0) {
+        origin = index;
+      } else if (previousCellValue === 0 && currentCellValue !== 0) {
         destination = index;
       }
     }
   }
 
-  return [[origin, destination], getCell(currentBoardState, destination)];
+  return {
+    move: [origin, destination],
+    player: getCell(currentBoardState, destination),
+    capture: previousDelta === currentDelta,
+  };
 }

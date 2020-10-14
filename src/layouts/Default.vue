@@ -24,7 +24,7 @@
         </g-link>
       </nav>
     </header>
-    <main class="p-10 bg-gray-400 flex-auto">
+    <main class="p-10 bg-gray-400 flex-auto rounded">
       <slot />
     </main>
   </div>
@@ -52,6 +52,6 @@ query {
 
 <style lang="css" scoped>
 nav {
-  min-width: 200px;
+  min-width: 160px;
 }
 </style>

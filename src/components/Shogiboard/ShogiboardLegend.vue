@@ -1,18 +1,72 @@
 <template>
-  <section class="bg-white rounded flex flex-col justify-between">
-    <div>
-      <header class="flex m-4 border-gray-100 border-b pb-4">
-        <ComputerIcon /><span class="ml-2">Computer level 1</span>
-      </header>
+  <section class="bg-white rounded flex flex-col" style="min-width: 250px">
+    <header class="p-4 pb-2 border-gray-200 border-b">
+      <div class="flex pb-3">
+        <ComputerIcon /><span class="ml-2">
+          Computer level {{ computerLevel }}
+        </span>
+      </div>
+      <div class="flex justify-between">
+        <button
+          class="transition duration-200 transform"
+          :class="[
+            moveHistory.length
+              ? 'hover:text-red-600 hover:-rotate-45'
+              : 'opacity-25 cursor-not-allowed',
+          ]"
+          :disabled="!moveHistory.length"
+          @click="$emit('undo')"
+        >
+          <UndoIcon class="w-4 h-4" />
+        </button>
+        <button
+          class="hover:text-red-600 transition duration-200 transform hover:rotate-45"
+          @click="settingsOpened = !settingsOpened"
+        >
+          <SettingsIcon class="w-4 h-4" />
+        </button>
+      </div>
+    </header>
+    <section
+      v-if="settingsOpened"
+      class="border-2 border-red-100 bg-gray-100 p-4"
+    >
+      <h2 class="text-sm font-bold mb-3">Settings</h2>
+      <div>
+        <h3 class="text-xs text-gray-600 mb-1">Computer level</h3>
+        <div class="flex mb-6">
+          <button
+            v-for="possibleComputerLevel in possibleComputerLevels"
+            :key="possibleComputerLevel"
+            class="border mr-2 w-10 h-10 flex items-center justify-center"
+            :class="[
+              possibleComputerLevel === computerLevel
+                ? 'bg-white border-black border-2 text-black'
+                : 'border-gray-400 text-gray-400',
+            ]"
+            @click="
+              $emit(
+                'update:computerLevel',
+                possibleComputerLevel === computerLevel
+                  ? 0
+                  : possibleComputerLevel
+              )
+            "
+          >
+            {{ possibleComputerLevel }}
+          </button>
+        </div>
+      </div>
 
       <button
-        v-if="moveHistory.length"
         class="bg-orange-400 text-white py-1 px-2 text-xs"
-        @click="$emit('undo')"
+        @click="$emit('restart')"
       >
-        Undo last move
+        Restart game
       </button>
+    </section>
 
+    <section ref="moveHistory" class="flex-grow overflow-y-scroll">
       <ol class="m-2">
         <li
           v-for="(move, index) in readibleMoveHistory"
@@ -25,11 +79,10 @@
           <span class="flex-grow font-bold text-sm pl-4">{{ move[1] }}</span>
         </li>
       </ol>
-    </div>
-
-    <footer>
+    </section>
+    <footer class="flex flex-col">
       <div
-        class="m-2 p-2 rounded border-black border-2 flex flex-col items-center"
+        class="m-2 p-2 rounded border-black border-2 flex flex-col items-center flex-grow"
       >
         <ShogiboardPiece :team-id="movingPlayerId" />
         <span class="font-bold">To play</span>
@@ -41,12 +94,17 @@
 <script>
 import ShogiboardPiece from '@/components/Shogiboard/ShogiboardPiece.vue';
 import ComputerIcon from '@/components/Icons/ComputerIcon.vue';
+import SettingsIcon from '@/components/Icons/SettingsIcon.vue';
+import UndoIcon from '@/components/Icons/UndoIcon.vue';
+
 import { indexToRankFile } from './Shogiboard.helper';
 
 export default {
   components: {
     ShogiboardPiece,
     ComputerIcon,
+    SettingsIcon,
+    UndoIcon,
   },
   props: {
     moveHistory: {
@@ -58,16 +116,45 @@ export default {
       required: true,
       type: Number,
     },
+    computerLevel: {
+      required: true,
+      type: Number,
+    },
+    possibleComputerLevels: {
+      required: true,
+      type: Array,
+    },
+  },
+  data() {
+    return {
+      settingsOpened: false,
+    };
   },
   computed: {
     readibleMoveHistory() {
-      return this.moveHistory.map(([move]) => [
+      return this.moveHistory.map(({ move }) => [
         indexToRankFile(move[0]),
         indexToRankFile(move[1]),
       ]);
     },
   },
+  watch: {
+    // auto scroll down when movehistory list gets too big
+    readibleMoveHistory() {
+      this.$nextTick(() => {
+        const container = this.$refs.moveHistory;
+        container.scrollTop = container.scrollHeight;
+      });
+    },
+  },
 };
 </script>
 
-<style></style>
+<style>
+button {
+  outline: 0;
+}
+button:focus {
+  outline: 0;
+}
+</style>

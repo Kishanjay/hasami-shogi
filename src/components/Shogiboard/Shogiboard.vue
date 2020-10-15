@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-white rounded p-10 flex flex-col">
+  <section class="bg-white rounded flex flex-col">
     <ShogiboardFile position="top" :number-of-columns="numberOfColumns" />
     <div class="flex">
       <ShogiboardRank position="left" :number-of-rows="numberOfRows" />
@@ -15,7 +15,13 @@
             class="relative w-16 h-16 border cursor-pointer"
             :class="{
               moveOption: selectedPieceMoveOptions[rowNumber][columnNumber],
-              highlighted: highlightedFields[rowNumber][columnNumber],
+              highlighted:
+                highlightedFields &&
+                highlightedFields.length &&
+                highlightedFields.length > rowNumber &&
+                highlightedFields[rowNumber].length &&
+                highlightedFields[rowNumber].length > columnNumber &&
+                highlightedFields[rowNumber][columnNumber],
             }"
             @click.native="cellClickHandler([rowNumber, columnNumber])"
           >
@@ -59,7 +65,7 @@ export default {
     highlightedFields: {
       type: Array,
       required: false,
-      default: () => [],
+      default: null,
     },
   },
   data() {
@@ -78,8 +84,9 @@ export default {
   },
   created() {
     this.calculateSelectedPieceMoveOptions();
-
-    this.eventBus.$on('updateSelectedPiece', this.updateSelectedPiece);
+    if (this.eventBus) {
+      this.eventBus.$on('updateSelectedPiece', this.updateSelectedPiece);
+    }
   },
   methods: {
     cellClickHandler(index) {
@@ -98,7 +105,6 @@ export default {
         }
         // Invalid move
         this.updateSelectedPiece(null);
-        return;
       }
 
       // Logic related to selecting a piece

@@ -14,6 +14,8 @@
       :moving-player-id="movingPlayerId"
       :computer-level.sync="computerLevel"
       :possible-computer-levels="possibleComputerLevel"
+      :pvp-mode="pvpMode"
+      @update:pvpMode="(m) => $emit('update:pvpMode', m)"
       @undo="undo"
       @restart="restart"
     />
@@ -50,6 +52,13 @@ export default {
     Shogiboard,
     ShogiboardLegend,
   },
+  props: {
+    pvpMode: {
+      required: false,
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       shogiGame: null,
@@ -64,6 +73,14 @@ export default {
       highlightedFields: undefined,
       cpuLoading: false,
     };
+  },
+  watch: {
+    pvpMode(pvpMode) {
+      if (!pvpMode && this.movingPlayerId === 2) {
+        this.movingPlayerId = 1;
+        this.computerMovePiece();
+      }
+    },
   },
   provide: {
     eventBus,
@@ -87,8 +104,11 @@ export default {
     playerMovePiece(origin, destination) {
       this.shogiGame.player_move(...origin, ...destination);
       this.updateBoardState();
-      this.movingPlayerId = 2;
-      this.computerMovePiece();
+      this.movingPlayerId = this.movingPlayerId === 1 ? 2 : 1;
+
+      if (!this.pvpMode) {
+        this.computerMovePiece();
+      }
     },
     computerMovePiece() {
       const cpuLevel = this.computerLevel;

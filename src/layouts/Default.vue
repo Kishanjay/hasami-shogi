@@ -1,26 +1,29 @@
 <template>
   <div class="layout flex min-h-screen">
     <header class="header px-4 py-6 flex-initial flex flex-col">
-      <strong class="mb-4">
+      <strong class="mb-6 text-lg">
         <g-link to="/">{{ $static.metadata.siteName }}</g-link>
       </strong>
 
       <nav class="nav flex flex-col">
+        <span class="text-xs font-bold text-gray-600">Play</span>
         <g-link
           class="p-2 rounded my-1 flex items-center"
           to="/"
           exact-active-class="bg-gray-200"
         >
           <PlayIcon class="w-4 h-4" />
-          <span class="ml-2">Play</span>
+          <span class="ml-2 text-sm font-bold text-gray-900">Offline</span>
         </g-link>
+
+        <span class="text-xs font-bold text-gray-600 mt-4">Info</span>
         <g-link
           class="p-2 rounded my-1 flex items-center"
           to="/about"
           exact-active-class="bg-gray-200"
         >
           <InfoIcon class="w-4 h-4" />
-          <span class="ml-2">About</span>
+          <span class="ml-2 text-sm font-bold text-gray-900">About</span>
         </g-link>
       </nav>
     </header>

@@ -1,11 +1,15 @@
 <template>
   <section class="bg-white rounded flex flex-col" style="min-width: 250px">
     <header class="p-4 pb-2 border-gray-200 border-b">
-      <div class="flex pb-3">
-        <ComputerIcon /><span class="ml-2">
-          Computer level {{ computerLevel }}
-        </span>
+      <div v-if="!pvpMode" class="flex pb-3">
+        <ComputerIcon />
+        <span class="ml-2"> Computer level {{ computerLevel }} </span>
       </div>
+      <div v-else class="flex pb-3">
+        <PeopleIcon />
+        <span class="ml-2"> Offline PvP </span>
+      </div>
+
       <div class="flex justify-between">
         <button
           class="transition duration-200 transform"
@@ -32,17 +36,44 @@
       class="border-2 border-red-100 bg-gray-100 p-4"
     >
       <h2 class="text-sm font-bold mb-3">Settings</h2>
-      <div>
+      <div class="mb-2">
+        <h3 class="text-xs text-gray-600 mb-1">Offline mode</h3>
+        <div class="flex">
+          <button
+            class="w-16 h-10 flex items-center justify-center mr-2"
+            :class="[
+              !pvpMode
+                ? 'border-2 border-black text-black bg-white'
+                : 'border border-gray-400 text-gray-400',
+            ]"
+            @click="$emit('update:pvpMode', false)"
+          >
+            <ComputerIcon class="w-4 h-4" />
+          </button>
+          <button
+            class="w-16 h-10 flex items-center justify-center mr-2"
+            :class="[
+              pvpMode
+                ? 'border-2 border-black text-black bg-white'
+                : 'border border-gray-400 text-gray-400',
+            ]"
+            @click="$emit('update:pvpMode', true)"
+          >
+            <PeopleIcon class="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+      <div v-if="!pvpMode">
         <h3 class="text-xs text-gray-600 mb-1">Computer level</h3>
-        <div class="flex mb-6">
+        <div class="flex">
           <button
             v-for="possibleComputerLevel in possibleComputerLevels"
             :key="possibleComputerLevel"
-            class="border mr-2 w-10 h-10 flex items-center justify-center"
+            class="mr-2 w-10 h-10 flex items-center justify-center"
             :class="[
               possibleComputerLevel === computerLevel
-                ? 'bg-white border-black border-2 text-black'
-                : 'border-gray-400 text-gray-400',
+                ? 'border-2 border-black text-black bg-white'
+                : 'border border-gray-400 text-gray-400',
             ]"
             @click="
               $emit(
@@ -59,7 +90,7 @@
       </div>
 
       <button
-        class="bg-orange-400 text-white py-1 px-2 text-xs"
+        class="bg-orange-400 text-white py-1 px-2 text-xs mt-6"
         @click="$emit('restart')"
       >
         Restart game
@@ -94,6 +125,7 @@
 <script>
 import ShogiboardPiece from '@/components/Shogiboard/ShogiboardPiece.vue';
 import ComputerIcon from '@/components/Icons/ComputerIcon.vue';
+import PeopleIcon from '@/components/Icons/PeopleIcon.vue';
 import SettingsIcon from '@/components/Icons/SettingsIcon.vue';
 import UndoIcon from '@/components/Icons/UndoIcon.vue';
 
@@ -103,6 +135,7 @@ export default {
   components: {
     ShogiboardPiece,
     ComputerIcon,
+    PeopleIcon,
     SettingsIcon,
     UndoIcon,
   },
@@ -123,6 +156,10 @@ export default {
     possibleComputerLevels: {
       required: true,
       type: Array,
+    },
+    pvpMode: {
+      required: true,
+      type: Boolean,
     },
   },
   data() {

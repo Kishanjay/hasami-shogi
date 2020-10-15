@@ -78,7 +78,7 @@ export function copyBoard(board, filling = undefined) {
  * @param {Array} index Index of the board
  * @param {Array} value Value it should become
  */
-function setCell(board, index, value) {
+export function setCell(board, index, value) {
   const [rowIndex, columnIndex] = index;
   const boardCopy = copyBoard(board);
   boardCopy[rowIndex][columnIndex] = value;
@@ -87,7 +87,7 @@ function setCell(board, index, value) {
 }
 
 /**
- * @deprecated The board state will be kept fully in the wasm memory
+ * Moves a board piece on a board
  *
  * @param {Array} board The shogiboard state
  * @param {Array} origin Index of the board

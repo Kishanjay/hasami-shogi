@@ -2,7 +2,7 @@
   <div class="flex" style="height: 640px">
     <Shogiboard
       v-if="shogiGame"
-      class="mx-2"
+      class="mx-2 p-10"
       :board-state="boardState"
       :moving-player-id="movingPlayerId"
       :highlighted-fields="highlightedFields"
@@ -15,6 +15,7 @@
       :computer-level.sync="computerLevel"
       :possible-computer-levels="possibleComputerLevel"
       :pvp-mode="pvpMode"
+      :started="started"
       @update:pvpMode="(m) => $emit('update:pvpMode', m)"
       @undo="undo"
       @restart="restart"
@@ -61,6 +62,8 @@ export default {
   },
   data() {
     return {
+      started: false,
+
       shogiGame: null,
       boardState: null,
       moveHistory: [],
@@ -92,6 +95,7 @@ export default {
   },
   methods: {
     restart() {
+      this.started = false;
       this.shogiGame = newGame(8, 8);
       this.boardState = getBoardState(this.shogiGame);
       this.setHighlightedFields();
@@ -102,6 +106,7 @@ export default {
       eventBus.$emit('updateSelectedPiece', null);
     },
     playerMovePiece(origin, destination) {
+      this.started = true;
       this.shogiGame.player_move(...origin, ...destination);
       this.updateBoardState();
       this.movingPlayerId = this.movingPlayerId === 1 ? 2 : 1;

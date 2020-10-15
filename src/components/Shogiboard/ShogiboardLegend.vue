@@ -25,14 +25,15 @@
         </button>
         <button
           class="hover:text-red-600 transition duration-200 transform hover:rotate-45"
-          @click="settingsOpened = !settingsOpened"
+          :class="{ 'text-red-700': settingsOpened || !started }"
+          @click="toggleSettingsOpened"
         >
           <SettingsIcon class="w-4 h-4" />
         </button>
       </div>
     </header>
     <section
-      v-if="settingsOpened"
+      v-if="settingsOpened || !started"
       class="border-2 border-red-100 bg-gray-100 p-4"
     >
       <h2 class="text-sm font-bold mb-3">Settings</h2>
@@ -90,11 +91,15 @@
       </div>
 
       <button
+        v-if="started"
         class="bg-orange-400 text-white py-1 px-2 text-xs mt-6"
-        @click="$emit('restart')"
+        @click="restart"
       >
         Restart game
       </button>
+      <div v-else class="text-sm mt-6 italic text-gray-700">
+        Move a piece to start...
+      </div>
     </section>
 
     <section ref="moveHistory" class="flex-grow overflow-y-scroll">
@@ -161,6 +166,11 @@ export default {
       required: true,
       type: Boolean,
     },
+    started: {
+      required: false,
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -182,6 +192,19 @@ export default {
         const container = this.$refs.moveHistory;
         container.scrollTop = container.scrollHeight;
       });
+    },
+  },
+  methods: {
+    toggleSettingsOpened() {
+      if (this.started) {
+        this.settingsOpened = !this.settingsOpened;
+      } else {
+        this.settingsOpened = false;
+      }
+    },
+    restart() {
+      this.settingsOpened = false;
+      this.$emit('restart');
     },
   },
 };

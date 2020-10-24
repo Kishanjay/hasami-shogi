@@ -1,10 +1,15 @@
 # About
-
 Hasami Shogi board game
+![CI/CD flow](https://github.com/Kishanjay/hasami-shogi/workflows/CI/CD%20flow/badge.svg)
+
+Live preview: [https://hasami-shogi.netlify.app](https://hasami-shogi.netlify.app)
 
 # Develop
 
-`gridsome develop` to start a local dev server at `http://localhost:8080`
+`yarn build-wasm` to build the wasm computation engine 
+
+`yarn serve` to start a local dev server at `http://localhost:8080`
+
 
 *Write for readability untill performance becomes a problem*
 
@@ -50,7 +55,3 @@ after the type/scope, introduces a breaking API change (correlating with MAJOR
 in semantic versioning). A BREAKING CHANGE can be part of commits of any type.
 
 Source: [https://www.conventionalcommits.org/en/v1.0.0/](https://www.conventionalcommits.org/en/v1.0.0/)
-
-# Production 
-
-`gridsome build` to build the static pages

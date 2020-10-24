@@ -5,9 +5,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "build-cpu": "cd src/wasm/hasami-shogi-engine && wasm-pack build --target bundler",
-    "prod-build-cpu": "cd src/wasm/hasami-shogi-engine && wasm-pack build --target bundler",
-    "test-cpu": "cd src/wasm/hasami-shogi-engine && cargo test"
+    "build-wasm": "cd src/wasm/hasami-shogi-engine && wasm-pack build",
+    "test-wasm": "cd src/wasm/hasami-shogi-engine && cargo test"
   },
   "husky": {
     "hooks": {
@@ -16,8 +15,6 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "gridsome": "^0.7.0",
-    "hasami-shogi-engine": "file:src/wasm/hasami-shogi-engine/pkg",
     "tailwindcss": "^1.9.5",
     "vue": "^3.0.0"
   },

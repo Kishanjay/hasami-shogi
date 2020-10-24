@@ -1,0 +1,50 @@
+name: CI/CD flow
+
+on: push
+
+jobs:
+  test:
+    name: Continuous integration
+    if: github.ref != 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get dependencies
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - name: Test wasm code
+        run: yarn test-wasm
+      - run: yarn install
+      - name: "Lint source code"
+        run: yarn lint
+
+  deploy:
+    name: Continuous delivery (deploy to netlify)
+    needs: [test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get dependencies
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - run: yarn build-wasm
+      - run: yarn install
+      - run: yarn build
+
+      - name: Deploy to netlify production
+        if: github.ref == 'refs/heads/master'
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --prod
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+      - name: Deploy to netlify staging
+        if: github.ref != 'refs/heads/master'
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}

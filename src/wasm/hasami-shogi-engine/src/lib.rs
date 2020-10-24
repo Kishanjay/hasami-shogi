@@ -436,6 +436,7 @@ pub fn mini_maxi(board: &mut ShogiGame, maximizing_player: bool, depth: u32, mut
 }
 
 // gets a random idx from [0...max_idx] (inclusive)
+// note: this function only works in the browser context (when there is js)
 fn get_random_idx(max_idx: usize) -> usize {
   (js_sys::Math::random() * ((max_idx+1) as usize) as f64).floor() as usize
 }

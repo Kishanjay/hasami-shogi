@@ -2,10 +2,11 @@
   "name": "hasami-shogi",
   "private": true,
   "scripts": {
-    "build": "gridsome build",
-    "develop": "gridsome develop",
-    "explore": "gridsome explore",
-    "build-cpu": "cd src/wasm/hasami-shogi-engine && wasm-pack build",
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "build-cpu": "cd src/wasm/hasami-shogi-engine && wasm-pack build --target bundler",
+    "prod-build-cpu": "cd src/wasm/hasami-shogi-engine && wasm-pack build --target bundler",
     "test-cpu": "cd src/wasm/hasami-shogi-engine && cargo test"
   },
   "husky": {
@@ -14,24 +15,35 @@
     }
   },
   "dependencies": {
+    "core-js": "^3.6.5",
     "gridsome": "^0.7.0",
     "hasami-shogi-engine": "file:src/wasm/hasami-shogi-engine/pkg",
-    "vue": "^2.6.12"
+    "tailwindcss": "^1.9.5",
+    "vue": "^3.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
-    "eslint": "^7.9.0",
-    "eslint-config-airbnb-base": "^14.2.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "babel-eslint": "^10.1.0",
+    "css-loader": "^5.0.0",
+    "eslint": "^7.11.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-gridsome": "^1.5.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-vue": "^6.2.2",
-    "gridsome-plugin-tailwindcss": "^3.0.1",
-    "gridsome-plugin-typescript": "^0.4.0",
+    "eslint-plugin-vue": "^7.0.0-beta.4",
     "husky": "^4.3.0",
-    "prettier": "^2.1.2"
-  }
+    "prettier": "^2.1.2",
+    "webpack-merge": "^5.2.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

@@ -14,16 +14,13 @@
             :key="columnNumber"
             class="relative w-16 h-16 border cursor-pointer"
             :class="{
-              moveOption: selectedPieceMoveOptions[rowNumber][columnNumber],
+              moveOption:
+                selectedPiece &&
+                selectedPieceMoveOptions[rowNumber][columnNumber],
               highlighted:
-                highlightedFields &&
-                highlightedFields.length &&
-                highlightedFields.length > rowNumber &&
-                highlightedFields[rowNumber].length &&
-                highlightedFields[rowNumber].length > columnNumber &&
-                highlightedFields[rowNumber][columnNumber],
+                highlightedFields && highlightedFields[rowNumber][columnNumber],
             }"
-            @click.native="cellClickHandler([rowNumber, columnNumber])"
+            @click="cellClickHandler([rowNumber, columnNumber])"
           >
             <ShogiboardPiece v-if="cellValue" :team-id="cellValue" />
           </ShogiboardCell>
@@ -42,7 +39,7 @@ import ShogiboardCell from './ShogiboardCell.vue';
 
 import ShogiboardPiece from './ShogiboardPiece.vue';
 
-import { getCell, canMoveTo, copyBoard, equalIndex } from './Shogiboard.helper';
+import { getCell, equalIndex } from './Shogiboard.helper';
 
 export default {
   components: {
@@ -51,7 +48,6 @@ export default {
     ShogiboardRank,
     ShogiboardPiece,
   },
-  inject: ['eventBus'],
   props: {
     boardState: {
       type: Array,
@@ -67,13 +63,18 @@ export default {
       required: false,
       default: null,
     },
+    selectedPiece: {
+      type: Array,
+      required: false,
+      default: null,
+    },
+    selectedPieceMoveOptions: {
+      type: Array,
+      required: false,
+      default: null,
+    },
   },
-  data() {
-    return {
-      selectedPiece: null,
-      selectedPieceMoveOptions: [],
-    };
-  },
+  emits: ['move:selected-piece', 'update:selected-piece'],
   computed: {
     numberOfRows() {
       return this.boardState.length;
@@ -82,69 +83,37 @@ export default {
       return this.boardState[0].length;
     },
   },
-  created() {
-    this.calculateSelectedPieceMoveOptions();
-    if (this.eventBus) {
-      this.eventBus.$on('updateSelectedPiece', this.updateSelectedPiece);
-    }
-  },
   methods: {
+    /**
+     * Smart cell click handler function that correctly determines what should
+     * happen based on the boardstate received from the props
+     */
     cellClickHandler(index) {
-      // Logic related to moving a piece
-      if (this.selectedPiece) {
-        // Put down the picked up piece
-        if (equalIndex(this.selectedPiece, index)) {
-          this.updateSelectedPiece(null);
-          return;
-        }
-        // Valid move
-        if (getCell(this.selectedPieceMoveOptions, index)) {
-          this.moveSelectedPiece(index);
-          this.updateSelectedPiece(null);
-          return;
-        }
-        // Invalid move
-        this.updateSelectedPiece(null);
-      }
-
-      // Logic related to selecting a piece
-      const cellValue = getCell(this.boardState, index);
-      if (cellValue === this.movingPlayerId) {
-        this.updateSelectedPiece(index);
-      }
-    },
-    moveSelectedPiece(index) {
-      this.$emit('move:piece', this.selectedPiece, index);
-    },
-    updateSelectedPiece(index) {
-      if (!index || !getCell(this.boardState, index)) {
-        this.selectedPiece = null;
-      } else {
-        this.selectedPiece = index;
-      }
-      this.calculateSelectedPieceMoveOptions();
-    },
-
-    calculateSelectedPieceMoveOptions() {
-      if (!this.selectedPiece) {
-        this.selectedPieceMoveOptions = copyBoard(this.boardState, false);
+      // when clicking on the movingplayers piece, select that piece
+      if (getCell(this.boardState, index) === this.movingPlayerId) {
+        this.$emit('update:selected-piece', index);
         return;
       }
-
-      const result = [];
-      for (let rowIndex = 0; rowIndex < this.numberOfRows; rowIndex += 1) {
-        const row = [];
-        for (
-          let columnIndex = 0;
-          columnIndex < this.numberOfColumns;
-          columnIndex += 1
-        ) {
-          const destination = [rowIndex, columnIndex];
-          row.push(canMoveTo(this.boardState, this.selectedPiece, destination));
+      if (this.selectedPiece) {
+        // clicking on the already selected piece
+        if (equalIndex(this.selectedPiece, index)) {
+          this.$emit('update:selected-piece', null);
+          return;
         }
-        result.push(row);
+
+        // clicking on an invalid move option
+        if (this.selectedPieceMoveOptions[index[0]][index[1]] !== true) {
+          this.$emit('update:selected-piece', null);
+          return;
+        }
+
+        // clicking on a valid move option
+        // eslint-disable-next-line vue/custom-event-name-casing
+        this.$emit('move:selected-piece', index);
+        return;
       }
-      this.selectedPieceMoveOptions = result;
+      // default
+      this.$emit('update:selected-piece', null);
     },
   },
 };

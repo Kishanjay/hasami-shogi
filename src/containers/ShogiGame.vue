@@ -6,13 +6,16 @@
       :board-state="boardState"
       :moving-player-id="movingPlayerId"
       :highlighted-fields="highlightedFields"
-      @move:piece="playerMovePiece"
+      :selected-piece="selectedPiece"
+      :selected-piece-move-options="selectedPieceMoveOptions"
+      @update:selected-piece="updateSelectedPiece"
+      @move:selected-piece="playerMovePiece"
     />
     <ShogiboardLegend
+      v-model:computer-level="computerLevel"
       class="mx-2"
       :move-history="moveHistory"
       :moving-player-id="movingPlayerId"
-      :computer-level.sync="computerLevel"
       :possible-computer-levels="possibleComputerLevel"
       :pvp-mode="pvpMode"
       :started="started"
@@ -28,30 +31,30 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import Shogiboard from '@/components/Shogiboard/Shogiboard.vue';
 import ShogiboardLegend from '@/components/Shogiboard/ShogiboardLegend.vue';
 
-import {
-  newGame,
-  getBoardState,
-  importGame,
-} from '@/services/hasami-shogi-engine.service';
 import {
   extractLastMove,
   getWidth,
   getHeight,
   copyBoard,
+  getMoveOptions,
 } from '@/components/Shogiboard/Shogiboard.helper';
 
 // to keep some logic at the child components an eventbus is used for
 // some communication
-const eventBus = new Vue();
+const eventBus = null;
+
+const hse = import('@/services/hasami-shogi-engine.service.js');
 
 export default {
   components: {
     Shogiboard,
     ShogiboardLegend,
+  },
+  provide: {
+    eventBus,
   },
   props: {
     pvpMode: {
@@ -60,21 +63,30 @@ export default {
       default: false,
     },
   },
+  emits: ['update:pvpMode'],
   data() {
     return {
       started: false,
 
       shogiGame: null,
       boardState: null,
+
       moveHistory: [],
       boardStateHistory: [],
+
+      selectedPiece: null,
+      selectedPieceMoveOptions: null,
+
+      highlightedFields: undefined,
+
       movingPlayerId: 1,
       computerLevel: 3,
       possibleComputerLevel: [1, 2, 3, 4],
 
       cpuThinkingTimer: null,
-      highlightedFields: undefined,
       cpuLoading: false,
+
+      hse: null, // linked hasami-shogi-engine
     };
   },
   watch: {
@@ -85,32 +97,43 @@ export default {
       }
     },
   },
-  provide: {
-    eventBus,
-  },
   created() {
-    this.shogiGame = newGame(8, 8);
-    this.boardState = getBoardState(this.shogiGame);
-    this.setHighlightedFields();
+    // wait for the wasm engine to be compiled and ready to run
+    hse.then((r) => {
+      this.hse = r;
+      this.shogiGame = this.hse.newGame(8, 8);
+      this.boardState = this.hse.getBoardState(this.shogiGame);
+      this.setHighlightedFields(null);
+    });
   },
   methods: {
     restart() {
       this.started = false;
-      this.shogiGame = newGame(8, 8);
-      this.boardState = getBoardState(this.shogiGame);
-      this.setHighlightedFields();
+      this.shogiGame = this.hse.newGame(8, 8);
+      this.boardState = this.hse.getBoardState(this.shogiGame);
+      this.setHighlightedFields(null);
       this.moveHistory = [];
       this.boardStateHistory = [];
       this.movingPlayerId = 1;
       clearTimeout(this.cpuThinkingTimer);
-      eventBus.$emit('updateSelectedPiece', null);
+      this.selectedPiece = null;
+      this.selectedPieceMoveOptions = null;
     },
-    playerMovePiece(origin, destination) {
+    updateSelectedPiece(index) {
+      this.selectedPiece = index;
+      this.selectedPieceMoveOptions = getMoveOptions(
+        this.boardState,
+        this.selectedPiece
+      );
+    },
+    playerMovePiece(destination) {
       this.started = true;
-      this.shogiGame.player_move(...origin, ...destination);
+      this.shogiGame.player_move(...this.selectedPiece, ...destination);
       this.updateBoardState();
       this.movingPlayerId = this.movingPlayerId === 1 ? 2 : 1;
 
+      this.selectedPiece = null;
+      this.selectedPieceMoveOptions = null;
       if (!this.pvpMode) {
         this.computerMovePiece();
       }
@@ -130,9 +153,14 @@ export default {
         this.cpuLoading = false;
       }, timeout);
     },
+    /**
+     * function that will update the boardstate based on the shogiGame instance
+     * updating the boardstate here allows us to also compute the move that was
+     * played by the cpu
+     */
     updateBoardState() {
       const previousBoardState = this.boardState;
-      const newBoardState = getBoardState(this.shogiGame);
+      const newBoardState = this.hse.getBoardState(this.shogiGame);
       const lastMove = extractLastMove(previousBoardState, newBoardState);
 
       const previousHighlightedFields = this.highlightedFields;
@@ -153,8 +181,6 @@ export default {
     },
     undo() {
       clearTimeout(this.cpuThinkingTimer);
-      eventBus.$emit('updateSelectedPiece', null);
-
       this.playsound('back.wav');
 
       let lastMove = this.moveHistory.pop();
@@ -165,13 +191,15 @@ export default {
       }
 
       this.highlightedFields = lastMove.highlightedFields;
-      this.shogiGame = importGame(
+      this.shogiGame = this.hse.importGame(
         getWidth(boardState),
         getHeight(boardState),
         boardState
       );
       this.boardState = boardState;
       this.movingPlayerId = 1;
+      this.selectedPiece = null;
+      this.selectedPieceMoveOptions = null;
     },
     setHighlightedFields(fields) {
       const highlightedFields = copyBoard(this.boardState, false);

@@ -7,15 +7,17 @@
         {{ pvpMode ? 'Player' : 'Computer' }}
       </button>
     </h1>
-    <ShogiGame :pvp-mode.sync="pvpMode" />
+    <ShogiGame v-model:pvp-mode="pvpMode" />
   </Layout>
 </template>
 
 <script>
+import Layout from '@/layouts/Default.vue';
 import ShogiGame from '@/containers/ShogiGame.vue';
 
 export default {
   components: {
+    Layout,
     ShogiGame,
   },
   metaInfo: {

@@ -1,9 +1,28 @@
-// This is the main.js file. Import global CSS and scripts here.
-// The Client API can be used here. Learn more: gridsome.org/docs/client-api
+import { createApp, h } from 'vue';
+import IndexPage from './pages/Index.vue';
+import AboutPage from './pages/About.vue';
 
-import DefaultLayout from '~/layouts/Default.vue'
+import './main.css';
 
-export default function (Vue, { router, head, isClient }) {
-  // Set default layout as a global component
-  Vue.component('Layout', DefaultLayout)
-}
+const routes = {
+  '/': IndexPage,
+  '/about': AboutPage,
+};
+
+const SimpleRouter = {
+  data: () => ({
+    currentRoute: window.location.pathname,
+  }),
+
+  computed: {
+    CurrentComponent() {
+      return routes[this.currentRoute] || IndexPage;
+    },
+  },
+
+  render() {
+    return h(this.CurrentComponent);
+  },
+};
+
+createApp(SimpleRouter).mount('#app');

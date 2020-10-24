@@ -172,6 +172,7 @@ export default {
       default: true,
     },
   },
+  emits: ['undo', 'update:pvpMode', 'update:computerLevel', 'restart'],
   data() {
     return {
       settingsOpened: false,

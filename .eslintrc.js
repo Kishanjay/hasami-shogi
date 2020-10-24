@@ -5,18 +5,18 @@ module.exports = {
     node: true,
   },
   extends: [
-    'airbnb-base',
     'prettier',
-    'prettier/vue',
     'plugin:prettier/recommended',
-    'plugin:gridsome/recommended',
-    'plugin:vue/recommended',
+    'plugin:vue/vue3-recommended',
+    'eslint:recommended',
   ],
   parserOptions: {
+    parser: 'babel-eslint',
     ecmaVersion: 2019,
     sourceType: 'module',
+    allowImportExportEverywhere: true,
   },
-  plugins: ['gridsome', 'vue', 'prettier'],
+  plugins: ['prettier'],
   settings: {
     'import/resolver': {
       alias: {
@@ -28,6 +28,7 @@ module.exports = {
       },
     },
   },
+  ignorePatterns: ['src/wasm/**/*.*'],
   rules: {
     // Conflicts with prettiers max-line-length
     'vue/max-attributes-per-line': 0,

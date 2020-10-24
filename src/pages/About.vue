@@ -44,7 +44,10 @@
 
           <ShogiBoard
             :board-state="movingBoard"
-            @move:piece="(o, d) => movePiece('movingBoard', o, d)"
+            :selected-piece="movingBoardSelectedPiece"
+            :selected-piece-move-options="movingBoardSelectedPieceMoveOptions"
+            @move:selected-piece="moveSelectedMovingBoardPiece"
+            @update:selected-piece="updateMovingBoardSelectedPiece"
           />
         </div>
 
@@ -102,17 +105,17 @@
           />
         </div>
 
-        <div class="border p-8 text-center">
+        <div class="border p-16 text-center">
           <h2 class="text-md mb-1 font-bold">4. Play and WIN</h2>
           <p class="mb-8">
             A player wins by capturing all but one of their opponent's pieces.
           </p>
-          <g-link
-            to="/"
+          <a
+            href="/"
             class="bg-green-500 hover:bg-green-400 text-white font-bold py-4 px-8 border-b-4 border-green-700 hover:border-green-500 rounded outline-none focus:outline-none"
           >
             Lets get started
-          </g-link>
+          </a>
         </div>
 
         <p class="mb-2" />
@@ -122,9 +125,12 @@
 </template>
 
 <script>
-import Vue from 'vue';
+import Layout from '@/layouts/Default.vue';
 import ShogiBoard from '@/components/Shogiboard/Shogiboard.vue';
-import { moveBoardPiece } from '@/components/Shogiboard/Shogiboard.helper';
+import {
+  getMoveOptions,
+  moveBoardPiece,
+} from '@/components/Shogiboard/Shogiboard.helper';
 
 import {
   initialMovingBoard,
@@ -134,19 +140,20 @@ import {
   capturingBoardDemo,
 } from '@/services/demo.service';
 
-const eventBus = new Vue();
-
 export default {
   metaInfo: {
     title: 'About Hasami Shogi',
   },
   components: {
+    Layout,
     ShogiBoard,
   },
-  provide: { eventBus },
   data() {
     return {
       movingBoard: initialMovingBoard,
+      movingBoardSelectedPiece: null,
+      movingBoardSelectedPieceMoveOptions: null,
+
       capturingBoard: initialCapturingBoard,
       capturingBoard_highlightedFields: null,
       capturingBoard2: initialCapturingBoard2,
@@ -158,8 +165,21 @@ export default {
     capturingBoardDemo(this);
   },
   methods: {
-    movePiece(boardName, origin, destination) {
-      this[boardName] = moveBoardPiece(this[boardName], origin, destination);
+    updateMovingBoardSelectedPiece(index) {
+      this.movingBoardSelectedPiece = index;
+      this.movingBoardSelectedPieceMoveOptions = getMoveOptions(
+        this.movingBoard,
+        this.movingBoardSelectedPiece
+      );
+    },
+    moveSelectedMovingBoardPiece(destination) {
+      this.movingBoard = moveBoardPiece(
+        this.movingBoard,
+        this.movingBoardSelectedPiece,
+        destination
+      );
+      this.movingBoardSelectedPiece = null;
+      this.movingBoardSelectedPieceMoveOptions = null;
     },
   },
 };

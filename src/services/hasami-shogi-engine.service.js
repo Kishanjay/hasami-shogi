@@ -1,7 +1,6 @@
-// eslint-disable-next-line import/no-unresolved
-// import { ShogiBoard } from 'hasami-shogi-engine';
+// eslint-disable import/no-unresolved, import/named
 
-// eslint-disable-next-line import/named
+// import { ShogiBoard } from 'hasami-shogi-engine';
 // import { memory } from 'hasami-shogi-engine/hasami_shogi_engine_bg.wasm';
 
 import { memory } from '../wasm/hasami-shogi-engine/pkg/hasami_shogi_engine_bg.wasm';

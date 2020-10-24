@@ -151,6 +151,28 @@ export function canMoveTo(board, origin, destination) {
 }
 
 /**
+ * Returns a 2d array containing all fields the current piece can move to as
+ * true
+ * @param {*} board
+ * @param {*} position
+ */
+export function getMoveOptions(board, position) {
+  const result = copyBoard(board, false);
+  if (!position || !getCell(board, position)) {
+    return result;
+  }
+
+  for (let rowIndex = 0; rowIndex < getHeight(board); rowIndex += 1) {
+    for (let columnIndex = 0; columnIndex < getWidth(board); columnIndex += 1) {
+      if (canMoveTo(board, position, [rowIndex, columnIndex])) {
+        result[rowIndex][columnIndex] = true;
+      }
+    }
+  }
+  return result;
+}
+
+/**
  * Extract which piece has moved based on 2 boardStates (right after eachother)
  * determines which piece was moved, from where and to where it was moved, but
  * also extracts whether the move has made a capture

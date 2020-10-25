@@ -10,6 +10,18 @@ export function getRow(board, rowIndex) {
   return board[rowIndex];
 }
 
+export function countCells(board, cellValue) {
+  let count = 0;
+  for (const row of board) {
+    for (const cell of row) {
+      if (cell === cellValue) {
+        count += 1;
+      }
+    }
+  }
+  return count;
+}
+
 export function getCell(board, [rowIndex, columnIndex]) {
   return board[rowIndex][columnIndex];
 }

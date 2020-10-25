@@ -1,12 +1,12 @@
 # About
-![CI/CD flow](https://github.com/Kishanjay/hasami-shogi/workflows/CI/CD%20flow/badge.svg)
+![CI/CD flow](https://github.com/kishanjay/hasami-shogi/workflows/CI/CD%20flow/badge.svg)
 
 **Hasami Shogi board game**
 *(please visit the about page of the live preview for a tutorial)*
 
 Live preview: [https://hasami-shogi.netlify.app](https://hasami-shogi.netlify.app)
  
-![Screenshot of the application](https://raw.githubusercontent.com/Kishanjay/hasami-shogi/master/demo.png "Screenshot of the application")
+![Screenshot of the application](https://raw.githubusercontent.com/kishanjay/hasami-shogi/master/demo.png "Screenshot of the application")
 
 ## Stack
 This serverless application was written with `Vue 3` as the frontend framework.

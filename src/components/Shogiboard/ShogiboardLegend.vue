@@ -33,7 +33,7 @@
       </div>
     </header>
     <section
-      v-if="settingsOpened || !started"
+      v-if="settingsOpened || !started || victorPlayerId"
       class="border-2 border-red-100 bg-gray-100 p-4"
     >
       <h2 class="text-sm font-bold mb-3">Settings</h2>
@@ -91,7 +91,7 @@
       </div>
 
       <button
-        v-if="started"
+        v-if="started || victorPlayerId"
         class="bg-orange-400 text-white py-1 px-2 text-xs mt-6"
         @click="restart"
       >
@@ -120,8 +120,14 @@
       <div
         class="m-2 p-2 rounded border-black border-2 flex flex-col items-center flex-grow"
       >
-        <ShogiboardPiece :team-id="movingPlayerId" />
-        <span class="font-bold">To play</span>
+        <template v-if="victorPlayerId">
+          <ShogiboardPiece :team-id="victorPlayerId" />
+          <span class="font-bold">WON!</span>
+        </template>
+        <template v-else>
+          <ShogiboardPiece :team-id="movingPlayerId" />
+          <span class="font-bold">To play</span>
+        </template>
       </div>
     </footer>
   </section>
@@ -170,6 +176,11 @@ export default {
       required: false,
       type: Boolean,
       default: true,
+    },
+    victorPlayerId: {
+      required: false,
+      type: Number,
+      default: null,
     },
   },
   emits: ['undo', 'update:pvpMode', 'update:computerLevel', 'restart'],

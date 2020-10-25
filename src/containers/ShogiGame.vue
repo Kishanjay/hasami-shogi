@@ -8,6 +8,7 @@
       :highlighted-fields="highlightedFields"
       :selected-piece="selectedPiece"
       :selected-piece-move-options="selectedPieceMoveOptions"
+      :victor-player-id="victorPlayerId"
       @update:selected-piece="updateSelectedPiece"
       @move:selected-piece="playerMovePiece"
     />
@@ -19,6 +20,7 @@
       :possible-computer-levels="possibleComputerLevel"
       :pvp-mode="pvpMode"
       :started="started"
+      :victor-player-id="victorPlayerId"
       @update:pvpMode="(m) => $emit('update:pvpMode', m)"
       @undo="undo"
       @restart="restart"
@@ -40,6 +42,7 @@ import {
   getHeight,
   copyBoard,
   getMoveOptions,
+  countCells,
 } from '@/components/Shogiboard/Shogiboard.helper';
 
 // to keep some logic at the child components an eventbus is used for
@@ -67,6 +70,7 @@ export default {
   data() {
     return {
       started: false,
+      victorPlayerId: null,
 
       shogiGame: null,
       boardState: null,
@@ -118,8 +122,12 @@ export default {
       clearTimeout(this.cpuThinkingTimer);
       this.selectedPiece = null;
       this.selectedPieceMoveOptions = null;
+      this.victorPlayerId = null;
     },
     updateSelectedPiece(index) {
+      if (this.victorPlayerId) {
+        return;
+      }
       this.selectedPiece = index;
       this.selectedPieceMoveOptions = getMoveOptions(
         this.boardState,
@@ -127,6 +135,9 @@ export default {
       );
     },
     playerMovePiece(destination) {
+      if (this.victorPlayerId) {
+        return;
+      }
       this.started = true;
       this.shogiGame.player_move(...this.selectedPiece, ...destination);
       this.updateBoardState();
@@ -134,6 +145,11 @@ export default {
 
       this.selectedPiece = null;
       this.selectedPieceMoveOptions = null;
+
+      if (this.checkAndGetFinished()) {
+        return;
+      }
+
       if (!this.pvpMode) {
         this.computerMovePiece();
       }
@@ -151,6 +167,8 @@ export default {
         this.updateBoardState();
         this.movingPlayerId = 1;
         this.cpuLoading = false;
+
+        this.checkAndGetFinished();
       }, timeout);
     },
     /**
@@ -200,6 +218,7 @@ export default {
       this.movingPlayerId = 1;
       this.selectedPiece = null;
       this.selectedPieceMoveOptions = null;
+      this.victorPlayerId = null;
     },
     setHighlightedFields(fields) {
       const highlightedFields = copyBoard(this.boardState, false);
@@ -214,6 +233,21 @@ export default {
     playsound(name) {
       const audio = new Audio(`/assets/${name}`);
       audio.play();
+    },
+    /**
+     * will check if the game has ended. Will update the victorPlayer variable
+     * accordingly. Returns a boolean based on whether the game has ended.
+     */
+    checkAndGetFinished() {
+      if (countCells(this.boardState, 1) <= 1) {
+        this.victorPlayerId = 2;
+        return true;
+      }
+      if (countCells(this.boardState, 2) <= 1) {
+        this.victorPlayerId = 1;
+        return true;
+      }
+      return false;
     },
   },
 };

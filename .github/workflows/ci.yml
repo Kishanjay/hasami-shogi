@@ -19,6 +19,7 @@ jobs:
 
   deploy:
     name: Continuous delivery (deploy to netlify)
+    if: always()
     needs: [test]
     runs-on: ubuntu-latest
 

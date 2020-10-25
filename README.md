@@ -1,8 +1,21 @@
 # About
-Hasami Shogi board game
 ![CI/CD flow](https://github.com/Kishanjay/hasami-shogi/workflows/CI/CD%20flow/badge.svg)
 
+**Hasami Shogi board game**
+*(please visit the about page of the live preview for a tutorial)*
+
 Live preview: [https://hasami-shogi.netlify.app](https://hasami-shogi.netlify.app)
+ 
+![Screenshot of the application](https://raw.githubusercontent.com/Kishanjay/hasami-shogi/master/demo.png "Screenshot of the application")
+
+## Stack
+This serverless application was written with `Vue 3` as the frontend framework.
+`Tailwind` is used tp add styling to the elements. `Webassembly` (`Rust`) is 
+being used to compute the best move for the computer player. For computing the 
+best move we're using the `minimax` algorithm. `Webpack` is used to bundle and 
+build the application. `Github actions` is used as a `CI/CD` tool. `Netlify` is
+used to host the result.
+
 
 # Develop
 

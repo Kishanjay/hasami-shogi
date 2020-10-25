@@ -1,5 +1,9 @@
 <template>
-  <section class="bg-white rounded flex flex-col">
+  <section class="relative bg-white rounded flex flex-col">
+    <div v-if="victorPlayerId" class="px-2 pb-3">
+      <strong>Gameover</strong>
+      The {{ victorPlayerId === 1 ? 'blue' : 'red' }} player won the game!
+    </div>
     <ShogiboardFile position="top" :number-of-columns="numberOfColumns" />
     <div class="flex">
       <ShogiboardRank position="left" :number-of-rows="numberOfRows" />
@@ -29,6 +33,11 @@
       <ShogiboardRank position="right" :number-of-rows="numberOfRows" />
     </div>
     <ShogiboardFile position="bottom" :number-of-columns="numberOfColumns" />
+
+    <div
+      v-if="victorPlayerId"
+      class="absolute bg-gray-200 bg-opacity-25 top-0 bottom-0 left-0 right-0"
+    />
   </section>
 </template>
 
@@ -70,6 +79,11 @@ export default {
     },
     selectedPieceMoveOptions: {
       type: Array,
+      required: false,
+      default: null,
+    },
+    victorPlayerId: {
+      type: Number,
       required: false,
       default: null,
     },
